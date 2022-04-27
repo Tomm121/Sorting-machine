@@ -13,6 +13,8 @@
 #define HIGH	1 
 #define LOW		0
 #define TIMEOUT	5000
+#define TIMEOUT2 3000
+#define TRYOUT 3
 #define F_CPU 1000000UL
 #define stepsPerRev 3700
 #define pulseWidthMicros 100  
