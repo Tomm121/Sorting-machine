@@ -37,6 +37,8 @@ unsigned long timing;
 
 // TEST GIT NEW BRANCH
 
+
+
 ///////////////////////////////////////////
 ///// -----  BOUCLE PRINCIPALE ----- /////
 /////////////////////////////////////////
@@ -68,20 +70,18 @@ void Loop_OS(void)
 		SET_BIT(TIMSK0,TOIE0); // Activation du timer pour avoir un timeout si aucun composant ne tombe au bout d'un certain temps
 		table_vibrante_ON(); // Activation de la table vibrante
 		RECEIVED = FALSE; // Variable bool qui devient TRUE quand les 4 bytes de données envoyés par la Raspberry Pi sont recu
-		while(RECEIVED == FALSE && timing != TIMEOUT)
+		while(timing != TIMEOUT)
 		{
 		}
 		CLR_BIT(TIMSK0,TOIE0); // Arret du timer
 		table_vibrante_OFF(); // Desactivation table vibrante
 		RECEIVED = FALSE;
+		reset_data();
+		affichage_line1("Info Raspberry...");
+		while(RECEIVED == FALSE && timing !=TIMEOUT2);
 		if (timing != TIMEOUT) // si il y a encore des composants, on ne repasse pas par le choix de la valeur de composant
 		{
 			CHOIX_RES = TRUE; // On ne doit plus refaire le choix du composant au debut
-			reset_data();
-			affichage_line1("Info Raspberry...");
-			while(RECEIVED == FALSE)
-			{
-			}
 			res_read = unmask_data(data); // fonction qui demasque les differents bytes envoyes par la raspberry et les remet dans le bon ordre
 			affichage_line1("Resistance lue : ");
 			affichage_long(res_read); // Affichage de la valeur de résistance scanée envoyée par la Raspberry, démasquée par la fonction precedente
