@@ -35,7 +35,7 @@ char FIRST = TRUE;
 const unsigned long dureeAntiRebond = 10;
 unsigned long timing;
 
-// TEST GIT
+// TEST GIT NEW BRANCH
 
 ///////////////////////////////////////////
 ///// -----  BOUCLE PRINCIPALE ----- /////
