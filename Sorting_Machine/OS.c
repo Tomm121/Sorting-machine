@@ -34,7 +34,8 @@ unsigned long res_read;
 char FIRST = TRUE;
 const unsigned long dureeAntiRebond = 10;
 unsigned long timing;
-uint8_t try;
+uint8_t try_conv;
+uint8_t try_TV;
 
 
 void state_machine(void)
@@ -74,6 +75,7 @@ void Loop_OS(void)
 		affichage_line1("Table vibrante...");
 		SET_BIT(TIMSK0,TOIE0); // Activation du timer pour avoir un timeout si aucun composant ne tombe au bout d'un certain temps
 		table_vibrante_ON(); // Activation de la table vibrante
+		try_TV++;
 		while(timing != TIMEOUT);
 		CLR_BIT(TIMSK0,TOIE0); // Arret du timer
 		table_vibrante_OFF(); // Desactivation table vibrante
@@ -84,17 +86,17 @@ void Loop_OS(void)
 		RECEIVED = FALSE;
 		do 
 		{
-			try++;
+			try_conv++;
 			convoyeur(); // Activation du convoyeur
-			itoa(try,buffer_debug,10);
+			itoa(try_conv,buffer_debug,10);
 			lcd_gotoxy(15,1);
 			lcd_puts(buffer_debug);
 			_delay_ms(1500);
 		}
-		while(RECEIVED == FALSE && try != TRYOUT);
-		if (try != TRYOUT) // si il y a encore des composants, on ne repasse pas par le choix de la valeur de composant
+		while(RECEIVED == FALSE && try_conv != TRYOUT_CONV);
+		if (try_conv != TRYOUT_CONV) // si il y a encore des composants, on ne repasse pas par le choix de la valeur de composant
 		{
-			try = 0;
+			try_conv = 0;
 			CHOIX_RES = TRUE; // On ne doit plus refaire le choix du composant au debut
 			res_read = unmask_data(data); // fonction qui demasque les differents bytes envoyes par la raspberry et les remet dans le bon ordre
 			affichage_line1("Resistance lue : ");
@@ -108,7 +110,8 @@ void Loop_OS(void)
 		}
 		else // Dans le cas où il n'y a plus de composants, on se remet à "l'etat initial" du choix de la valeur.
 		{
-			try = 0;
+			try_conv = 0;
+			try_TV = 0;
 			FIRST = TRUE;
 			reset_tab();
 			reset_buf();
