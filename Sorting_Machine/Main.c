@@ -38,7 +38,8 @@ int main(void)
 	//_delay_ms(20000);
 	I2C_init(0x20);
 	//START BOUCLE INFINIE
-	Loop_OS();
+	//Loop_OS();
+	state_machine();
 	
 	return 0;
 }

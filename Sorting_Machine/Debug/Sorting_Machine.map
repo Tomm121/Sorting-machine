@@ -72,7 +72,6 @@ c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/..
 Allocating common symbols
 Common symbol       size              file
 
-try_TV              0x1               OS.o
 val_res_wtd_tab     0x14              OS.o
 val_res_wtd         0x4               OS.o
 x_tab               0x2               OS.o
@@ -80,7 +79,6 @@ chiffre             0x2               OS.o
 CHOIX_RES           0x2               OS.o
 data                0x8               I2C_slave.o
 buffer_debug        0xa               OS.o
-try_conv            0x1               OS.o
 timing              0x4               OS.o
 res_read            0x4               OS.o
 buffer_TWI          0xa               OS.o
@@ -106,14 +104,14 @@ Discarded input sections
  .text          0x00000000        0x0 OS.o
  .data          0x00000000        0x0 OS.o
  .bss           0x00000000        0x0 OS.o
- .text.state_machine
-                0x00000000        0x2 OS.o
- .bss.state     0x00000000        0x1 OS.o
+ .text.Loop_OS  0x00000000      0x20e OS.o
  .rodata.dureeAntiRebond
                 0x00000000        0x4 OS.o
  .text          0x00000000        0x0 PWM.o
  .data          0x00000000        0x0 PWM.o
  .bss           0x00000000        0x0 PWM.o
+ .text.PWM_LEDs
+                0x00000000       0x32 PWM.o
  .text          0x00000000        0x0 TIMERS.o
  .data          0x00000000        0x0 TIMERS.o
  .bss           0x00000000        0x0 TIMERS.o
@@ -629,29 +627,27 @@ END GROUP
  .text.servomoteur
                 0x00000868       0x3a OS.o
                 0x00000868                servomoteur
- .text.Loop_OS  0x000008a2      0x1e2 OS.o
-                0x000008a2                Loop_OS
+ .text.state_machine
+                0x000008a2      0x212 OS.o
+                0x000008a2                state_machine
  .text.__vector_23
-                0x00000a84       0x4e OS.o
-                0x00000a84                __vector_23
+                0x00000ab4       0x4e OS.o
+                0x00000ab4                __vector_23
  .text.__vector_5
-                0x00000ad2       0xea OS.o
-                0x00000ad2                __vector_5
+                0x00000b02       0xea OS.o
+                0x00000b02                __vector_5
  .text.__vector_6
-                0x00000bbc       0x9a OS.o
-                0x00000bbc                __vector_6
+                0x00000bec       0x9a OS.o
+                0x00000bec                __vector_6
  .text.__vector_3
-                0x00000c56       0xa2 OS.o
-                0x00000c56                __vector_3
+                0x00000c86       0x9c OS.o
+                0x00000c86                __vector_3
  .text.PWM_SERVO
-                0x00000cf8       0x16 PWM.o
-                0x00000cf8                PWM_SERVO
+                0x00000d22       0x16 PWM.o
+                0x00000d22                PWM_SERVO
  .text.PWM_MOTEUR_DC
-                0x00000d0e       0x26 PWM.o
-                0x00000d0e                PWM_MOTEUR_DC
- .text.PWM_LEDs
-                0x00000d34       0x2a PWM.o
-                0x00000d34                PWM_LEDs
+                0x00000d38       0x26 PWM.o
+                0x00000d38                PWM_MOTEUR_DC
  .text.TIMER0_Init_COUNTER_1ms
                 0x00000d5e       0x18 TIMERS.o
                 0x00000d5e                TIMER0_Init_COUNTER_1ms
@@ -796,22 +792,23 @@ END GROUP
                 0x00800200                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
- .data.FIRST    0x00800200        0x1 OS.o
-                0x00800200                FIRST
+ .data.FIRST2   0x00800200        0x1 OS.o
+                0x00800200                FIRST2
+ .data.FIRST    0x00800201        0x1 OS.o
+                0x00800201                FIRST
  *(.gnu.linkonce.d*)
  *(.rodata)
  *(.rodata*)
  .rodata.str1.1
-                0x00800201        0x5 Main.o
+                0x00800202        0x5 Main.o
  .rodata.str1.1
-                0x00800206       0x77 OS.o
+                0x00800207       0x77 OS.o
  *(.gnu.linkonce.r*)
                 0x0080027e                . = ALIGN (0x2)
- *fill*         0x0080027d        0x1 
                 0x0080027e                _edata = .
                 0x0080027e                PROVIDE (__data_end, .)
 
-.bss            0x0080027e       0x4b
+.bss            0x0080027e       0x4c
                 0x0080027e                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
@@ -819,32 +816,36 @@ END GROUP
                 0x0080027e                i
  .bss.RECEIVED  0x00800280        0x1 I2C_slave.o
                 0x00800280                RECEIVED
- .bss.dateDernierChangement.2374
+ .bss.dateDernierChangement.2384
                 0x00800281        0x4 OS.o
+ .bss.state     0x00800285        0x1 OS.o
+                0x00800285                state
+ .bss.try_TV    0x00800286        0x1 OS.o
+                0x00800286                try_TV
+ .bss.try_conv  0x00800287        0x1 OS.o
+                0x00800287                try_conv
  *(COMMON)
- COMMON         0x00800285        0x8 I2C_slave.o
-                0x00800285                data
- COMMON         0x0080028d       0x3c OS.o
-                0x0080028d                try_TV
-                0x0080028e                val_res_wtd_tab
-                0x008002a2                val_res_wtd
-                0x008002a6                x_tab
-                0x008002a8                chiffre
-                0x008002aa                CHOIX_RES
-                0x008002ac                buffer_debug
-                0x008002b6                try_conv
-                0x008002b7                timing
-                0x008002bb                res_read
-                0x008002bf                buffer_TWI
-                0x008002c9                PROVIDE (__bss_end, .)
+ COMMON         0x00800288        0x8 I2C_slave.o
+                0x00800288                data
+ COMMON         0x00800290       0x3a OS.o
+                0x00800290                val_res_wtd_tab
+                0x008002a4                val_res_wtd
+                0x008002a8                x_tab
+                0x008002aa                chiffre
+                0x008002ac                CHOIX_RES
+                0x008002ae                buffer_debug
+                0x008002b8                timing
+                0x008002bc                res_read
+                0x008002c0                buffer_TWI
+                0x008002ca                PROVIDE (__bss_end, .)
                 0x000015b6                __data_load_start = LOADADDR (.data)
                 0x00001634                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x008002c9        0x0
+.noinit         0x008002ca        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x008002c9                _end = .
+                0x008002ca                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -935,38 +936,38 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x229d
+.debug_info     0x00000000     0x254c
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0xbbc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_info    0x00000bbc       0x83 hardware.o
  .debug_info    0x00000c3f      0x17c I2C_slave.o
  .debug_info    0x00000dbb      0x4b1 lcd.o
  .debug_info    0x0000126c      0x164 Main.o
- .debug_info    0x000013d0      0xcea OS.o
- .debug_info    0x000020ba      0x134 PWM.o
- .debug_info    0x000021ee       0xaf TIMERS.o
+ .debug_info    0x000013d0      0xf99 OS.o
+ .debug_info    0x00002369      0x134 PWM.o
+ .debug_info    0x0000249d       0xaf TIMERS.o
 
-.debug_abbrev   0x00000000     0x139d
+.debug_abbrev   0x00000000     0x137f
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0xb1a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_abbrev  0x00000b1a       0x51 hardware.o
  .debug_abbrev  0x00000b6b       0xf0 I2C_slave.o
  .debug_abbrev  0x00000c5b      0x202 lcd.o
  .debug_abbrev  0x00000e5d       0x8b Main.o
- .debug_abbrev  0x00000ee8      0x3a3 OS.o
- .debug_abbrev  0x0000128b       0xc1 PWM.o
- .debug_abbrev  0x0000134c       0x51 TIMERS.o
+ .debug_abbrev  0x00000ee8      0x385 OS.o
+ .debug_abbrev  0x0000126d       0xc1 PWM.o
+ .debug_abbrev  0x0000132e       0x51 TIMERS.o
 
-.debug_line     0x00000000     0x135a
+.debug_line     0x00000000     0x1519
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x1fa C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_line    0x000001fa      0x129 hardware.o
  .debug_line    0x00000323      0x194 I2C_slave.o
  .debug_line    0x000004b7      0x482 lcd.o
  .debug_line    0x00000939      0x123 Main.o
- .debug_line    0x00000a5c      0x6f1 OS.o
- .debug_line    0x0000114d       0xf0 PWM.o
- .debug_line    0x0000123d      0x11d TIMERS.o
+ .debug_line    0x00000a5c      0x8b0 OS.o
+ .debug_line    0x0000130c       0xf0 PWM.o
+ .debug_line    0x000013fc      0x11d TIMERS.o
 
 .debug_frame    0x00000000      0x540
  *(.debug_frame)
@@ -978,7 +979,7 @@ END GROUP
  .debug_frame   0x000004b8       0x44 PWM.o
  .debug_frame   0x000004fc       0x44 TIMERS.o
 
-.debug_str      0x00000000      0xa48
+.debug_str      0x00000000      0xa5e
  *(.debug_str)
  .debug_str     0x00000000      0x3e6 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_str     0x000003e6      0x15c hardware.o
@@ -987,21 +988,21 @@ END GROUP
                                 0x1e9 (size before relaxing)
  .debug_str     0x000005b4       0xb7 lcd.o
                                 0x233 (size before relaxing)
- .debug_str     0x0000066b       0x5d Main.o
-                                0x1f8 (size before relaxing)
- .debug_str     0x000006c8      0x2be OS.o
-                                0x47e (size before relaxing)
- .debug_str     0x00000986       0x37 PWM.o
+ .debug_str     0x0000066b       0x63 Main.o
+                                0x1fe (size before relaxing)
+ .debug_str     0x000006ce      0x2ce OS.o
+                                0x494 (size before relaxing)
+ .debug_str     0x0000099c       0x37 PWM.o
                                 0x1d1 (size before relaxing)
- .debug_str     0x000009bd       0x8b TIMERS.o
+ .debug_str     0x000009d3       0x8b TIMERS.o
                                 0x1f1 (size before relaxing)
 
-.debug_loc      0x00000000      0xefd
+.debug_loc      0x00000000     0x1049
  *(.debug_loc)
  .debug_loc     0x00000000      0x119 I2C_slave.o
  .debug_loc     0x00000119      0x40b lcd.o
- .debug_loc     0x00000524      0x951 OS.o
- .debug_loc     0x00000e75       0x88 PWM.o
+ .debug_loc     0x00000524      0xa9d OS.o
+ .debug_loc     0x00000fc1       0x88 PWM.o
 
 .debug_macinfo
  *(.debug_macinfo)
