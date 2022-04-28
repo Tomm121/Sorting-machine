@@ -37,9 +37,47 @@ unsigned long timing;
 uint8_t try_conv;
 uint8_t try_TV;
 
+enum states{state1,state2,state3};
+enum states state = state1;
+
 
 void state_machine(void)
 {
+	switch (state)
+	{
+	case state1:
+				if (FIRST == TRUE)
+				{
+				val_res_wtd =0; //valeur de résistance souhaitée
+				CHOIX_RES = FALSE; // valeur bool si le choix de la valeur est terminé ou non
+				x_tab = 0; // indice de la position dans le tableau d'entier qui recoit les chiffres, au fur et à mesure des appuis sur le bouton poussoir de l'encodeur pour les valider
+				chiffre = 0; //valeur du chiffre qui s'incrémente et décrémente quand on tourne l'encodeur rotatif
+				timing = 0; // valeur du timer en ms
+				affichage_line1("Choix resistance : ");
+				affichage_chiffre_lcd();
+				enable_btns(); // Active les interuptions des boutons de la partie interface utilisateur					
+				timing = 0;
+				SET_BIT(TIMSK0,TOIE0); // activation du timer pour calculer le temps entre deux impulsions de l'encodeur afin d'eviter les rebonds	
+				FIRST = FALSE;
+				}
+				break;
+		
+	case state2:
+				if (FIRST == TRUE)
+				{
+				CLR_BIT(TIMSK0,TOIE0); // Arret du timer
+				timing = 0; // Reinitialisation  du timer
+				affichage_line1("Table vibrante...");
+				SET_BIT(TIMSK0,TOIE0); // Activation du timer pour avoir un timeout si aucun composant ne tombe au bout d'un certain temps
+				table_vibrante_ON(); // Activation de la table vibrante
+				try_TV++;
+				}
+				break;
+				
+	case state3
+	}
+
+	
 	
 }
 
@@ -340,7 +378,7 @@ ISR(INT2_vect) // bouton poussoir
 	affichage_line1("Valeur souhaite : ");
 	affichage_long(val_res_wtd);
 	_delay_ms(2000);
-	CHOIX_RES = TRUE;
+	state = state2;
 }
 
 

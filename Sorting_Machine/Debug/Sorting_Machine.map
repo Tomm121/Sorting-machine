@@ -108,6 +108,7 @@ Discarded input sections
  .bss           0x00000000        0x0 OS.o
  .text.state_machine
                 0x00000000        0x2 OS.o
+ .bss.state     0x00000000        0x1 OS.o
  .rodata.dureeAntiRebond
                 0x00000000        0x4 OS.o
  .text          0x00000000        0x0 PWM.o
@@ -818,7 +819,7 @@ END GROUP
                 0x0080027e                i
  .bss.RECEIVED  0x00800280        0x1 I2C_slave.o
                 0x00800280                RECEIVED
- .bss.dateDernierChangement.2367
+ .bss.dateDernierChangement.2374
                 0x00800281        0x4 OS.o
  *(COMMON)
  COMMON         0x00800285        0x8 I2C_slave.o
@@ -934,38 +935,38 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x2266
+.debug_info     0x00000000     0x229d
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0xbbc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_info    0x00000bbc       0x83 hardware.o
  .debug_info    0x00000c3f      0x17c I2C_slave.o
  .debug_info    0x00000dbb      0x4b1 lcd.o
  .debug_info    0x0000126c      0x164 Main.o
- .debug_info    0x000013d0      0xcb3 OS.o
- .debug_info    0x00002083      0x134 PWM.o
- .debug_info    0x000021b7       0xaf TIMERS.o
+ .debug_info    0x000013d0      0xcea OS.o
+ .debug_info    0x000020ba      0x134 PWM.o
+ .debug_info    0x000021ee       0xaf TIMERS.o
 
-.debug_abbrev   0x00000000     0x1374
+.debug_abbrev   0x00000000     0x139d
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0xb1a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_abbrev  0x00000b1a       0x51 hardware.o
  .debug_abbrev  0x00000b6b       0xf0 I2C_slave.o
  .debug_abbrev  0x00000c5b      0x202 lcd.o
  .debug_abbrev  0x00000e5d       0x8b Main.o
- .debug_abbrev  0x00000ee8      0x37a OS.o
- .debug_abbrev  0x00001262       0xc1 PWM.o
- .debug_abbrev  0x00001323       0x51 TIMERS.o
+ .debug_abbrev  0x00000ee8      0x3a3 OS.o
+ .debug_abbrev  0x0000128b       0xc1 PWM.o
+ .debug_abbrev  0x0000134c       0x51 TIMERS.o
 
-.debug_line     0x00000000     0x135b
+.debug_line     0x00000000     0x135a
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x1fa C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_line    0x000001fa      0x129 hardware.o
  .debug_line    0x00000323      0x194 I2C_slave.o
  .debug_line    0x000004b7      0x482 lcd.o
  .debug_line    0x00000939      0x123 Main.o
- .debug_line    0x00000a5c      0x6f2 OS.o
- .debug_line    0x0000114e       0xf0 PWM.o
- .debug_line    0x0000123e      0x11d TIMERS.o
+ .debug_line    0x00000a5c      0x6f1 OS.o
+ .debug_line    0x0000114d       0xf0 PWM.o
+ .debug_line    0x0000123d      0x11d TIMERS.o
 
 .debug_frame    0x00000000      0x540
  *(.debug_frame)
@@ -977,7 +978,7 @@ END GROUP
  .debug_frame   0x000004b8       0x44 PWM.o
  .debug_frame   0x000004fc       0x44 TIMERS.o
 
-.debug_str      0x00000000      0xa27
+.debug_str      0x00000000      0xa48
  *(.debug_str)
  .debug_str     0x00000000      0x3e6 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_str     0x000003e6      0x15c hardware.o
@@ -988,11 +989,11 @@ END GROUP
                                 0x233 (size before relaxing)
  .debug_str     0x0000066b       0x5d Main.o
                                 0x1f8 (size before relaxing)
- .debug_str     0x000006c8      0x29d OS.o
-                                0x45d (size before relaxing)
- .debug_str     0x00000965       0x37 PWM.o
+ .debug_str     0x000006c8      0x2be OS.o
+                                0x47e (size before relaxing)
+ .debug_str     0x00000986       0x37 PWM.o
                                 0x1d1 (size before relaxing)
- .debug_str     0x0000099c       0x8b TIMERS.o
+ .debug_str     0x000009bd       0x8b TIMERS.o
                                 0x1f1 (size before relaxing)
 
 .debug_loc      0x00000000      0xefd
