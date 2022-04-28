@@ -79,13 +79,16 @@ void Loop_OS(void)
 		table_vibrante_OFF(); // Desactivation table vibrante
 		timing = 0; // Reinitialisation  du timer
 		reset_data();
-		affichage_line1("Attente d'info de");
+		affichage_line1("Attente info de");
 		affichage_line2("la Raspberry...");
 		RECEIVED = FALSE;
 		do 
 		{
 			try++;
 			convoyeur(); // Activation du convoyeur
+			itoa(try,buffer_debug,10);
+			lcd_gotoxy(15,1);
+			lcd_puts(buffer_debug);
 			_delay_ms(1500);
 		}
 		while(RECEIVED == FALSE && try != TRYOUT);
@@ -128,14 +131,14 @@ void affichage_chiffre_lcd(void)
 
 void affichage_line1(char *s)
 {
-	//lcd_clrscr();
+	lcd_clrscr();
 	lcd_gotoxy(0,0);
 	lcd_puts(s);
 }
 
 void affichage_line2(char *s)
 {
-	lcd_clrscr();
+	//lcd_clrscr();
 	lcd_gotoxy(0,1);
 	lcd_puts(s);
 }

@@ -13,7 +13,6 @@
 #include <util/delay.h>
 #include <stdlib.h>
 
-char buffer[5];
 
 void PWM_SERVO(int match_value)
 {

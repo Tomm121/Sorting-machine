@@ -12,12 +12,11 @@
 // DEFINE
 #define HIGH	1 
 #define LOW		0
-#define TIMEOUT	5000
-#define TIMEOUT2 3000
+#define TIMEOUT	3000
 #define TRYOUT 3
 #define F_CPU 1000000UL
-#define stepsPerRev 3700
-#define pulseWidthMicros 100  
+#define stepsPerRev 200
+#define pulseWidthMicros 1000  
 #define microsBtwnSteps 1000
 #define duty_cycle_mot_dc 70 
 #define duty_cycle_leds 20 
