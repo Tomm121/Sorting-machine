@@ -27,7 +27,7 @@ unsigned long val_res_wtd;
 int chiffre;
 int x_tab;
 int val_res_wtd_tab[10];
-char buffer_debug[10];
+char buffer_itoa[10];
 char buffer_TWI[10];
 int CHOIX_RES;
 unsigned long res_read;
@@ -39,97 +39,128 @@ uint8_t try_conv = 0;;
 uint8_t try_TV = 0;
 
 
-enum states{state1,state2,state3,state4,state5};
+enum states{state1,state2,state3,state4,state5,state6};
 enum states state = state1;
 
 
+///////////////////////////////////////////
+///// -----  BOUCLE PRINCIPALE ----- /////
+/////////////////////////////////////////
+
 void state_machine(void)
 {
+	i = -2; // Variable externe de la classe I2C servant comme indice de la position des donnees dans le tableau de reception des donnees "data", il demarre à -2 car reception de 2 bytes non data après le SLA+R/W
+	PWM_LEDs(duty_cycle_leds); // Activation du panneau de LEDs avec une certaine luminosite pilote en PWM
 	while(1)
-	{switch (state)
 	{
-		case state1:
-		if (FIRST == TRUE)
+		switch (state)
 		{
-			val_res_wtd =0; //valeur de résistance souhaitée
-			CHOIX_RES = FALSE; // valeur bool si le choix de la valeur est terminé ou non
-			x_tab = 0; // indice de la position dans le tableau d'entier qui recoit les chiffres, au fur et à mesure des appuis sur le bouton poussoir de l'encodeur pour les valider
-			chiffre = 0; //valeur du chiffre qui s'incrémente et décrémente quand on tourne l'encodeur rotatif
-			timing = 0; // valeur du timer en ms
-			affichage_line1("Choix resistance : ");
-			affichage_chiffre_lcd();
-			enable_btns(); // Active les interuptions des boutons de la partie interface utilisateur
-			timing = 0;
-			SET_BIT(TIMSK0,TOIE0); // activation du timer pour calculer le temps entre deux impulsions de l'encodeur afin d'eviter les rebonds
-			FIRST = FALSE;
-		}
-		break;
-		
-		case state2:
-		if (FIRST2 == TRUE)
-		{
+			case state1:
+			if (FIRST == TRUE)
+			{
+				val_res_wtd =0; //valeur de résistance souhaitée
+				CHOIX_RES = FALSE; // valeur bool si le choix de la valeur est terminé ou non
+				x_tab = 0; // indice de la position dans le tableau d'entier qui recoit les chiffres, au fur et à mesure des appuis sur le bouton poussoir de l'encodeur pour les valider
+				chiffre = 0; //valeur du chiffre qui s'incrémente et décrémente quand on tourne l'encodeur rotatif
+				timing = 0; // valeur du timer en ms
+				lcd_clrscr();
+				affichage_line1("Choix resistance : ");
+				affichage_chiffre_lcd();
+				enable_btns(); // Active les interuptions des boutons de la partie interface utilisateur
+				timing = 0;
+				SET_BIT(TIMSK0,TOIE0); // activation du timer pour calculer le temps entre deux impulsions de l'encodeur afin d'eviter les rebonds
+				FIRST = FALSE;
+			}
+			break;
+			
+			case state2:
 			CLR_BIT(TIMSK0,TOIE0); // Arret du timer
 			timing = 0; // Reinitialisation  du timer
+			lcd_clrscr();
 			affichage_line1("Table vibrante...");
-			//SET_BIT(TIMSK0,TOIE0); // Activation du timer pour avoir un timeout si aucun composant ne tombe au bout d'un certain temps
 			table_vibrante_ON(); // Activation de la table vibrante
-			_delay_ms(3000);
+			_delay_ms(TIMETB);
 			table_vibrante_OFF(); // Desactivation table vibrante
 			try_TV++;
 			state = state3;
 			break;
 			
 			case state3 :
+			try_conv = 0;
 			reset_data();
+			lcd_clrscr();
 			affichage_line1("Attente info de");
 			affichage_line2("la Raspberry...");
 			RECEIVED = FALSE;
+			SET_BIT(TIMSK0,TOIE0); // Arret du timer
 			do
 			{
+				timing = 0;
 				convoyeur(); // Activation du convoyeur
 				try_conv++;
-				itoa(try_conv,buffer_debug,10);
+				itoa(try_conv,buffer_itoa,10);
 				lcd_gotoxy(15,1);
-				lcd_puts(buffer_debug);
-				_delay_ms(1500);
+				lcd_puts(buffer_itoa);
+				while(timing != 2000 && RECEIVED == FALSE);
 			}
 			while(RECEIVED == FALSE && try_conv != TRYOUT_CONV);
-			if (try_TV == TRYOUT_TV)
-			{
-				state = state5;
-			}
-			else if (RECEIVED == TRUE)
+			CLR_BIT(TIMSK0,TOIE0); // Arret du timer
+			
+			if (RECEIVED == TRUE)
 			{
 				RECEIVED = FALSE;
 				state = state4;
 			}
-			else if (try_conv ==TRYOUT_CONV)
+			else
 			{
-				try_conv = 0;
-				state = state2;
+				if (try_TV ==TRYOUT_TV)
+				{
+				try_TV = 0;
+				state = state6;
+				} 
+				else
+				{
+					try_conv = 0;
+					state = state2;
+				}
 			}
 			break;
 			
-			case state4 :
-			try_conv = 0;
+			case state4:
+			if (FIRST2 == TRUE)
+			{
+				lcd_clrscr();
+				affichage_line1("Composant !");
+				affichage_line2("Scan en cours...");
+				FIRST2 = FALSE;
+			}
+			if (RECEIVED == TRUE)
+			{
+				RECEIVED = FALSE;
+				state = state5;
+			}
+			break;
+			
+			case state5 :
+			FIRST2 = TRUE;
+			try_TV = 0;
 			CHOIX_RES = TRUE; // On ne doit plus refaire le choix du composant au debut
 			res_read = unmask_data(data); // fonction qui demasque les differents bytes envoyes par la raspberry et les remet dans le bon ordre
+			lcd_clrscr();
 			affichage_line1("Resistance lue : ");
 			affichage_long(res_read); // Affichage de la valeur de résistance scanée envoyée par la Raspberry, démasquée par la fonction precedente
 			_delay_ms(1500); // Temps d'affichage sur le LCD
 			servomoteur(); // Activation de servomoteur en fonction du resultat
-			timing =  0;
-			FIRST = FALSE;
+			_delay_ms(1000);
 			reset_buf();
 			state = state3;
 			break;
 			
-			case state5 :
-			try_conv = 0;
-			try_TV = 0;
+			case state6 :
 			FIRST = TRUE;
 			reset_tab();
 			reset_buf();
+			lcd_clrscr();
 			affichage_line1("Tri termine");
 			_delay_ms(1500);
 			state = state1;
@@ -137,87 +168,10 @@ void state_machine(void)
 		}
 	}
 
-	}
-	
 }
 
 
 
-///////////////////////////////////////////
-///// -----  BOUCLE PRINCIPALE ----- /////
-/////////////////////////////////////////
-void Loop_OS(void)
-{
-	i = -2; // Variable externe de la classe I2C servant comme indice de la position des donnees dans le tableau de reception des donnees "data", il demarre à -2 car reception de 2 bytes non data après le SLA+R/W
-	PWM_LEDs(duty_cycle_leds); // Activation du panneau de LEDs avec une certaine luminosite pilote en PWM
-	while (1)
-	{
-		if(FIRST == TRUE)
-		{
-			val_res_wtd =0; //valeur de résistance souhaitée
-			CHOIX_RES = FALSE; // valeur bool si le choix de la valeur est terminé ou non
-			x_tab = 0; // indice de la position dans le tableau d'entier qui recoit les chiffres, au fur et à mesure des appuis sur le bouton poussoir de l'encodeur pour les valider
-			chiffre = 0; //valeur du chiffre qui s'incrémente et décrémente quand on tourne l'encodeur rotatif
-			timing = 0; // valeur du timer en ms
-			affichage_line1("Choix resistance : ");
-			affichage_chiffre_lcd();
-			enable_btns(); // Active les interuptions des boutons de la partie interface utilisateur
-		}
-		timing = 0;
-		SET_BIT(TIMSK0,TOIE0); // activation du timer pour calculer le temps entre deux impulsions de l'encodeur afin d'eviter les rebonds
-		while(CHOIX_RES == FALSE) // Attente de l'appui sur le bouton de demarrage du tri pour indiquer que le choix de valeur est terminé
-		{
-		}
-		CLR_BIT(TIMSK0,TOIE0); // Arret du timer
-		timing = 0; // Reinitialisation  du timer
-		affichage_line1("Table vibrante...");
-		SET_BIT(TIMSK0,TOIE0); // Activation du timer pour avoir un timeout si aucun composant ne tombe au bout d'un certain temps
-		table_vibrante_ON(); // Activation de la table vibrante
-		try_TV++;
-		while(timing != TIMEOUT);
-		CLR_BIT(TIMSK0,TOIE0); // Arret du timer
-		table_vibrante_OFF(); // Desactivation table vibrante
-		timing = 0; // Reinitialisation  du timer
-		reset_data();
-		affichage_line1("Attente info de");
-		affichage_line2("la Raspberry...");
-		RECEIVED = FALSE;
-		do
-		{
-			try_conv++;
-			convoyeur(); // Activation du convoyeur
-			itoa(try_conv,buffer_debug,10);
-			lcd_gotoxy(15,1);
-			lcd_puts(buffer_debug);
-			_delay_ms(1500);
-		}
-		while(RECEIVED == FALSE && try_conv != TRYOUT_CONV);
-		if (try_conv != TRYOUT_CONV) // si il y a encore des composants, on ne repasse pas par le choix de la valeur de composant
-		{
-			try_conv = 0;
-			CHOIX_RES = TRUE; // On ne doit plus refaire le choix du composant au debut
-			res_read = unmask_data(data); // fonction qui demasque les differents bytes envoyes par la raspberry et les remet dans le bon ordre
-			affichage_line1("Resistance lue : ");
-			affichage_long(res_read); // Affichage de la valeur de résistance scanée envoyée par la Raspberry, démasquée par la fonction precedente
-			_delay_ms(1500); // Temps d'affichage sur le LCD
-			servomoteur(); // Activation de servomoteur en fonction du resultat
-			//convoyeur(); // Activation du convoyeur
-			timing =  0;
-			FIRST = FALSE;
-			reset_buf();
-		}
-		else // Dans le cas où il n'y a plus de composants, on se remet à "l'etat initial" du choix de la valeur.
-		{
-			try_conv = 0;
-			try_TV = 0;
-			FIRST = TRUE;
-			reset_tab();
-			reset_buf();
-			affichage_line1("Tri termine");
-			_delay_ms(1500);
-		}
-	}
-}
 
 ////////////////////////////////////////////
 ///// -----  FONCTIONS DIVERSES ----- /////
@@ -225,14 +179,14 @@ void Loop_OS(void)
 
 void affichage_chiffre_lcd(void)
 {
-	itoa(chiffre,buffer_debug,10);
+	itoa(chiffre,buffer_itoa,10);
 	lcd_gotoxy(x_tab,1);
-	lcd_puts(buffer_debug);
+	lcd_puts(buffer_itoa);
 }
 
 void affichage_line1(char *s)
 {
-	lcd_clrscr();
+	//lcd_clrscr();
 	lcd_gotoxy(0,0);
 	lcd_puts(s);
 }
@@ -253,7 +207,7 @@ void affichage_long(long val)
 
 void reset_tab(void)
 {
-	for (int i = 0;i <10 ;  i++)
+	for (int i = 0;i !=10 ;  i++)
 	{
 		val_res_wtd_tab[i] = 0;
 	}
@@ -261,9 +215,9 @@ void reset_tab(void)
 
 void reset_buf(void)
 {
-	for (int i = 0;i <10 ;  i++)
+	for (int i = 0;i !=10 ;  i++)
 	{
-		buffer_debug[i] = 0;
+		buffer_itoa[i] = 0;
 	}
 }
 

@@ -12,15 +12,15 @@
 // DEFINE
 #define HIGH	1 
 #define LOW		0
-#define TIMEOUT	3000
+#define TIMETB	3000
 #define TRYOUT_CONV 3
-#define TRYOUT_TV 3
+#define TRYOUT_TV 2
 #define F_CPU 1000000UL
 #define stepsPerRev 200
 #define pulseWidthMicros 1000  
 #define microsBtwnSteps 1000
 #define duty_cycle_mot_dc 70 
-#define duty_cycle_leds 20 
+#define duty_cycle_leds 70 
 
 extern int CHOIX_RES;
 
