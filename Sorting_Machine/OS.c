@@ -51,6 +51,7 @@ void state_machine(void)
 {
 	i = -2; // Variable externe de la classe I2C servant comme indice de la position des donnees dans le tableau de reception des donnees "data", il demarre à -2 car reception de 2 bytes non data après le SLA+R/W
 	PWM_LEDs(duty_cycle_leds); // Activation du panneau de LEDs avec une certaine luminosite pilote en PWM
+	PWM_SERVO(CENTRE);
 	while(1)
 	{
 		switch (state)
@@ -151,6 +152,8 @@ void state_machine(void)
 			affichage_long(res_read); // Affichage de la valeur de résistance scanée envoyée par la Raspberry, démasquée par la fonction precedente
 			_delay_ms(1500); // Temps d'affichage sur le LCD
 			servomoteur(); // Activation de servomoteur en fonction du resultat
+			_delay_ms(1000);
+			PWM_SERVO(CENTRE);
 			_delay_ms(1000);
 			reset_buf();
 			state = state3;
