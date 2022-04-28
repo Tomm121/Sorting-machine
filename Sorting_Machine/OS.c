@@ -36,7 +36,11 @@ const unsigned long dureeAntiRebond = 10;
 unsigned long timing;
 uint8_t try;
 
-// TEST GIT NEW BRANCH
+
+void state_machine(void)
+{
+	
+}
 
 
 

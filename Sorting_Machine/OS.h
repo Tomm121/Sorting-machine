@@ -26,6 +26,7 @@ extern int CHOIX_RES;
 
 // PROTOTYPES
 void Loop_OS(void);
+void state_machine(void);
 void recovery(void);
 void affichage_line1(char *s);
 void table_vibrante_ON(void);
