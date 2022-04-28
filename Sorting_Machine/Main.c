@@ -15,6 +15,7 @@
 #include "lcd.h"
 #include "I2C_slave.h"
 #include "PWM.h"
+#include <util/delay.h>
 
 
 // FONCTION PRINCIPALE
@@ -33,6 +34,8 @@ int main(void)
 	TIMER1_init_FASTPW_ICRn();
 	TIMER2_init_FASTPWM();
 	lcd_init(LCD_DISP_ON);
+	lcd_puts("TEST");
+	//_delay_ms(20000);
 	I2C_init(0x20);
 	//START BOUCLE INFINIE
 	Loop_OS();

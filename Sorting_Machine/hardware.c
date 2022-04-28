@@ -13,17 +13,17 @@
 void HARDWARE_init(void) 
 {	
 	//SET_DIRECTION (0 = input / 1 = output)
-	CLR_BIT(DDRA,DDA0); // channel B
-	CLR_BIT(DDRE,DDE4); // channel A
-	CLR_BIT(DDRE,DDE5); // SW
-	CLR_BIT(DDRD,DDD2); // ENTER
+	CLR_BIT(DDRA,DDA0); // channel B (P22)
+	CLR_BIT(DDRE,DDE4); // channel A (P02)
+	CLR_BIT(DDRE,DDE5); // SW (P03)
+	CLR_BIT(DDRD,DDD2); // ENTER (P19)
 	
 	SET_BIT(DDRD,DDD1); // SCL
 	SET_BIT(DDRD,DDD0); // SDA
 	SET_BIT(DDRL,DDL5); // Moteur DC
  	SET_BIT(DDRL,DDL3); // Moteur pas à pas : STEP
  	SET_BIT(DDRL,DDL1); // Moteur pas à pas : DIR
-	SET_BIT(DDRB,DDB5); // PWM Servo
+	SET_BIT(DDRB,DDB5); // PWM Servo (P11)
 	SET_BIT(DDRB,DDB4); // PWM Moteur DC
 	SET_BIT(DDRH,DDH6); // PWM LEDs
 	 

@@ -29,6 +29,7 @@ void Loop_OS(void);
 void state_machine(void);
 void recovery(void);
 void affichage_line1(char *s);
+void affichage_line2(char *s);
 void table_vibrante_ON(void);
 void table_vibrante_OFF(void);
 void desactiver_table_vibrante(void);

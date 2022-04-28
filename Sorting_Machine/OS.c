@@ -79,7 +79,8 @@ void Loop_OS(void)
 		table_vibrante_OFF(); // Desactivation table vibrante
 		timing = 0; // Reinitialisation  du timer
 		reset_data();
-		affichage_line1("Info Raspberry...");
+		affichage_line1("Attente d'info de");
+		affichage_line2("la Raspberry...");
 		RECEIVED = FALSE;
 		do 
 		{
@@ -97,13 +98,14 @@ void Loop_OS(void)
 			affichage_long(res_read); // Affichage de la valeur de résistance scanée envoyée par la Raspberry, démasquée par la fonction precedente
 			_delay_ms(1500); // Temps d'affichage sur le LCD 
 			servomoteur(); // Activation de servomoteur en fonction du resultat
-			convoyeur(); // Activation du convoyeur
+			//convoyeur(); // Activation du convoyeur
 			timing =  0;
 			FIRST = FALSE;
 			reset_buf();
 		}
 		else // Dans le cas où il n'y a plus de composants, on se remet à "l'etat initial" du choix de la valeur.
 		{
+			try = 0;
 			FIRST = TRUE;
 			reset_tab();
 			reset_buf();
@@ -126,8 +128,15 @@ void affichage_chiffre_lcd(void)
 
 void affichage_line1(char *s)
 {
-	lcd_clrscr();
+	//lcd_clrscr();
 	lcd_gotoxy(0,0);
+	lcd_puts(s);
+}
+
+void affichage_line2(char *s)
+{
+	lcd_clrscr();
+	lcd_gotoxy(0,1);
 	lcd_puts(s);
 }
 
@@ -234,8 +243,8 @@ void table_vibrante_OFF(void)
 
 void convoyeur(void)
 {
-	lcd_clrscr();
-	lcd_puts("Convoyeur...");
+// 	lcd_clrscr();
+// 	lcd_puts("Convoyeur...");
 	for (int i = 0; i < stepsPerRev; i++)
 	{
 		SET_BIT(PORTL,PL3);
@@ -243,7 +252,7 @@ void convoyeur(void)
 		CLR_BIT(PORTL,PA3);
 		_delay_us(microsBtwnSteps);
 	}
-	lcd_clrscr();
+	//lcd_clrscr();
 }
 
 ///////////////////////////////////////
@@ -279,7 +288,7 @@ ISR(INT4_vect) // Channel A de l'encodeur rotatif en pin 2
 	static unsigned long dateDernierChangement = 0;
 	unsigned long date = timing;
 	if ((date - dateDernierChangement) > dureeAntiRebond) {
-		uint8_t channel_B = (PINA && 1); // channel A sur la pin 22
+		uint8_t channel_B = (PINA && 1); // channel B sur la pin 22
 		if (channel_B == HIGH)
 		{
 			if (chiffre < 9)
