@@ -29,6 +29,7 @@ void HARDWARE_init(void)
 	 
 	
 	// SET PULLUP (0 = disabled / 1 = enabled)
+	CLR_BIT(PORTL,PL1); // Moteur pas à pas : DIR 
 	SET_BIT(PORTA,PA0); 
 	SET_BIT(PORTE,PE4); 
 	SET_BIT(PORTE,PE5);

@@ -289,13 +289,15 @@ void compute_value(void)
 void table_vibrante_ON(void)
 {
 	SET_BIT(PORTL,PL5);
-	PWM_MOTEUR_DC(duty_cycle_mot_dc);
+	SET_BIT(PORTB,PB4);
+	//PWM_MOTEUR_DC(duty_cycle_mot_dc); (DEBUG)
 }
 
 void table_vibrante_OFF(void)
 {
 	CLR_BIT(PORTL,PL5);
-	OCR2A = 0;
+	CLR_BIT(PORTB,PB4);
+	//OCR2A = 0; (DEBUG)
 }
 
 //////////////////////////////////////////
@@ -304,16 +306,13 @@ void table_vibrante_OFF(void)
 
 void convoyeur(void)
 {
-	// 	lcd_clrscr();
-	// 	lcd_puts("Convoyeur...");
 	for (int i = 0; i < stepsPerRev; i++)
 	{
 		SET_BIT(PORTL,PL3);
 		_delay_us(pulseWidthMicros);
-		CLR_BIT(PORTL,PA3);
+		CLR_BIT(PORTL,PL3);
 		_delay_us(microsBtwnSteps);
 	}
-	//lcd_clrscr();
 }
 
 ///////////////////////////////////////

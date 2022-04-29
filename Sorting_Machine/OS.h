@@ -17,9 +17,9 @@
 #define TRYOUT_TV 2
 #define F_CPU 1000000UL
 #define stepsPerRev 200
-#define pulseWidthMicros 1000  
-#define microsBtwnSteps 1000
-#define duty_cycle_mot_dc 70 
+#define pulseWidthMicros 2000  
+#define microsBtwnSteps 2000
+#define duty_cycle_mot_dc 100 
 #define duty_cycle_leds 70 
 
 extern int CHOIX_RES;
