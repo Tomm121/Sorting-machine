@@ -106,7 +106,6 @@ void state_machine(void)
 			}
 			while(RECEIVED == FALSE && try_conv != TRYOUT_CONV);
 			CLR_BIT(TIMSK0,TOIE0); // Arret du timer
-			
 			if (RECEIVED == TRUE)
 			{
 				RECEIVED = FALSE;
@@ -116,12 +115,12 @@ void state_machine(void)
 			{
 				if (try_TV ==TRYOUT_TV)
 				{
-				try_TV = 0;
-				state = state6;
+					
+					try_TV = 0;
+					state = state6;
 				} 
 				else
 				{
-					try_conv = 0;
 					state = state2;
 				}
 			}
