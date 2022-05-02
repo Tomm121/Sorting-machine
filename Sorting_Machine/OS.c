@@ -83,6 +83,7 @@ void state_machine(void)
 			_delay_ms(TIMETB);
 			table_vibrante_OFF(); // Desactivation table vibrante
 			try_TV++;
+			_delay_ms(500);
 			state = state3;
 			break;
 			
@@ -96,13 +97,13 @@ void state_machine(void)
 			SET_BIT(TIMSK0,TOIE0); // Arret du timer
 			do
 			{
-				timing = 0;
 				convoyeur(); // Activation du convoyeur
+				timing = 0;
 				try_conv++;
 				itoa(try_conv,buffer_itoa,10);
 				lcd_gotoxy(15,1);
 				lcd_puts(buffer_itoa);
-				while(timing != 2000 && RECEIVED == FALSE);
+				while(timing != 500 && RECEIVED == FALSE);
 			}
 			while(RECEIVED == FALSE && try_conv != TRYOUT_CONV);
 			CLR_BIT(TIMSK0,TOIE0); // Arret du timer
@@ -280,6 +281,15 @@ void compute_value(void)
 	}
 }
 
+void my_delay_us(uint16_t us) // Fonction de delay pour entrer une variable en paramètre
+{
+	while (0 < us)
+	{
+		_delay_us(1);
+		--us;
+	}
+}
+
 
 ///////////////////////////////////
 ///// -----  MOTEUR DC ----- /////
@@ -289,14 +299,14 @@ void table_vibrante_ON(void)
 {
 	SET_BIT(PORTL,PL5);
 	SET_BIT(PORTB,PB4);
-	//PWM_MOTEUR_DC(duty_cycle_mot_dc); (DEBUG)
+	PWM_MOTEUR_DC(duty_cycle_mot_dc); 
 }
 
 void table_vibrante_OFF(void)
 {
 	CLR_BIT(PORTL,PL5);
 	CLR_BIT(PORTB,PB4);
-	//OCR2A = 0; (DEBUG)
+	OCR2A = 0; 
 }
 
 //////////////////////////////////////////
@@ -305,12 +315,13 @@ void table_vibrante_OFF(void)
 
 void convoyeur(void)
 {
+	
 	for (int i = 0; i < stepsPerRev; i++)
 	{
 		SET_BIT(PORTL,PL3);
-		_delay_us(pulseWidthMicros);
+		my_delay_us(pulseWidthMicros);
 		CLR_BIT(PORTL,PL3);
-		_delay_us(microsBtwnSteps);
+		my_delay_us(microsBtwnSteps);
 	}
 }
 

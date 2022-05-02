@@ -16,7 +16,7 @@ void HARDWARE_init(void)
 	CLR_BIT(DDRA,DDA0); // channel B (P22)
 	CLR_BIT(DDRE,DDE4); // channel A (P02)
 	CLR_BIT(DDRE,DDE5); // SW (P03)
-	CLR_BIT(DDRD,DDD2); // ENTER (P19)
+	CLR_BIT(DDRD,DDD2); // ENTER (P19)/
 	
 	SET_BIT(DDRD,DDD1); // SCL
 	SET_BIT(DDRD,DDD0); // SDA
@@ -29,7 +29,7 @@ void HARDWARE_init(void)
 	 
 	
 	// SET PULLUP (0 = disabled / 1 = enabled)
-	CLR_BIT(PORTL,PL1); // Moteur pas à pas : DIR 
+	SET_BIT(PORTL,PL1); // Moteur pas à pas : DIR 
 	SET_BIT(PORTA,PA0); 
 	SET_BIT(PORTE,PE4); 
 	SET_BIT(PORTE,PE5);
