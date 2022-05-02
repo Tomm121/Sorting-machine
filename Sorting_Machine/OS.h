@@ -12,11 +12,12 @@
 // DEFINE
 #define HIGH	1 
 #define LOW		0
-#define TIMETB	3000
+#define Time_TB	3000
+#define Time_Btwn_conv	500
 #define TRYOUT_CONV 3
 #define TRYOUT_TV 2
 #define F_CPU 1000000UL
-#define stepsPerRev 50
+#define steps 50
 #define pulseWidthMicros 2000  
 #define microsBtwnSteps 2000
 #define duty_cycle_mot_dc 100 

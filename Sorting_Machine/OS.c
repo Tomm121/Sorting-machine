@@ -80,7 +80,7 @@ void state_machine(void)
 			lcd_clrscr();
 			affichage_line1("Table vibrante...");
 			table_vibrante_ON(); // Activation de la table vibrante
-			_delay_ms(TIMETB);
+			_delay_ms(Time_TB);
 			table_vibrante_OFF(); // Desactivation table vibrante
 			try_TV++;
 			_delay_ms(500);
@@ -103,7 +103,7 @@ void state_machine(void)
 				itoa(try_conv,buffer_itoa,10);
 				lcd_gotoxy(15,1);
 				lcd_puts(buffer_itoa);
-				while(timing != 500 && RECEIVED == FALSE);
+				while(timing != Time_Btwn_conv && RECEIVED == FALSE);
 			}
 			while(RECEIVED == FALSE && try_conv != TRYOUT_CONV);
 			CLR_BIT(TIMSK0,TOIE0); // Arret du timer
@@ -316,7 +316,7 @@ void table_vibrante_OFF(void)
 void convoyeur(void)
 {
 	
-	for (int i = 0; i < stepsPerRev; i++)
+	for (int i = 0; i < steps; i++)
 	{
 		SET_BIT(PORTL,PL3);
 		my_delay_us(pulseWidthMicros);
