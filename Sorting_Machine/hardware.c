@@ -26,6 +26,7 @@ void HARDWARE_init(void)
 	SET_BIT(DDRB,DDB5); // PWM Servo (P11)
 	SET_BIT(DDRB,DDB4); // PWM Moteur DC
 	SET_BIT(DDRH,DDH6); // PWM LEDs
+	SET_BIT(DDRB,DDB0); // ENABLE A4988
 	 
 	
 	// SET PULLUP (0 = disabled / 1 = enabled)
@@ -34,6 +35,7 @@ void HARDWARE_init(void)
 	SET_BIT(PORTE,PE4); 
 	SET_BIT(PORTE,PE5);
 	SET_BIT(PORTD,PD2);
+	CLR_BIT(PORTB,PB0);
 	
 	
 	/// SET INTERRUPTS

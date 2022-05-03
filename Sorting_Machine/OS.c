@@ -68,6 +68,7 @@ void state_machine(void)
 				affichage_line1("Choix resistance : ");
 				affichage_chiffre_lcd();
 				enable_btns(); // Active les interuptions des boutons de la partie interface utilisateur
+				sei();
 				timing = 0;
 				SET_BIT(TIMSK0,TOIE0); // activation du timer pour calculer le temps entre deux impulsions de l'encodeur afin d'eviter les rebonds
 				FIRST = FALSE;
@@ -83,7 +84,7 @@ void state_machine(void)
 			_delay_ms(Time_TB);
 			table_vibrante_OFF(); // Desactivation table vibrante
 			try_TV++;
-			_delay_ms(500);
+			_delay_ms(1000);
 			state = state3;
 			break;
 			
@@ -109,12 +110,13 @@ void state_machine(void)
 			CLR_BIT(TIMSK0,TOIE0); // Arret du timer
 			if (RECEIVED == TRUE)
 			{
+				try_TV = 0;
 				RECEIVED = FALSE;
 				state = state4;
 			}
 			else
 			{
-				if (try_TV ==TRYOUT_TV)
+				if (try_TV == TRYOUT_TV)
 				{
 					
 					try_TV = 0;
@@ -144,7 +146,6 @@ void state_machine(void)
 			
 			case state5 :
 			FIRST2 = TRUE;
-			try_TV = 0;
 			CHOIX_RES = TRUE; // On ne doit plus refaire le choix du composant au debut
 			res_read = unmask_data(data); // fonction qui demasque les differents bytes envoyes par la raspberry et les remet dans le bon ordre
 			lcd_clrscr();
@@ -297,16 +298,20 @@ void my_delay_us(uint16_t us) // Fonction de delay pour entrer une variable en p
 
 void table_vibrante_ON(void)
 {
+	SET_BIT(PORTB,PB0);
+	_delay_ms(200);
+	SET_BIT(PORTB,PB0);
 	SET_BIT(PORTL,PL5);
-	SET_BIT(PORTB,PB4);
 	PWM_MOTEUR_DC(duty_cycle_mot_dc); 
 }
 
 void table_vibrante_OFF(void)
 {
 	CLR_BIT(PORTL,PL5);
-	CLR_BIT(PORTB,PB4);
 	OCR2A = 0; 
+	_delay_ms(200);
+	CLR_BIT(PORTB,PB0);
+	_delay_ms(200);
 }
 
 //////////////////////////////////////////
@@ -315,7 +320,6 @@ void table_vibrante_OFF(void)
 
 void convoyeur(void)
 {
-	
 	for (int i = 0; i < steps; i++)
 	{
 		SET_BIT(PORTL,PL3);
@@ -354,8 +358,6 @@ ISR(TIMER0_OVF_vect)
 
 ISR(INT4_vect) // Channel A de l'encodeur rotatif en pin 2
 {
-	disable_btns();
-	//lcd_clrscr();
 	static unsigned long dateDernierChangement = 0;
 	unsigned long date = timing;
 	if ((date - dateDernierChangement) > dureeAntiRebond) {
@@ -376,7 +378,6 @@ ISR(INT4_vect) // Channel A de l'encodeur rotatif en pin 2
 		affichage_chiffre_lcd();
 		dateDernierChangement = date;
 	}
-	enable_btns();
 }
 
 ISR(INT5_vect) // SW : bouton poussoir de l'encodeur
@@ -393,7 +394,7 @@ ISR(INT5_vect) // SW : bouton poussoir de l'encodeur
 	_delay_ms(400); // Eviter une nouvelle interruption si l'utilisateur laisse trop longtemps appuye le bouton
 	
 	enable_btns();
-	
+	sei();
 }
 
 ISR(INT2_vect) // bouton poussoir
