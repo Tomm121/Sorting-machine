@@ -35,7 +35,7 @@ char FIRST = TRUE;
 char FIRST2 = TRUE;
 const unsigned long dureeAntiRebond = 10;
 unsigned long timing;
-uint8_t try_conv = 0;;
+uint16_t timing_conv = 0;;
 uint8_t try_TV = 0;
 
 
@@ -89,24 +89,21 @@ void state_machine(void)
 			break;
 			
 			case state3 :
-			try_conv = 0;
+			timing_conv = 0;
 			reset_data();
 			lcd_clrscr();
 			affichage_line1("Attente info de");
 			affichage_line2("la Raspberry...");
 			RECEIVED = FALSE;
 			SET_BIT(TIMSK0,TOIE0); // Arret du timer
-			do
+			CLR_BIT(PORTB,PB0);
+			_delay_ms(1000);
+			while(RECEIVED == FALSE && timing_conv < TIMEOUT_CONV)
 			{
 				convoyeur(); // Activation du convoyeur
-				timing = 0;
-				try_conv++;
-				itoa(try_conv,buffer_itoa,10);
-				lcd_gotoxy(15,1);
-				lcd_puts(buffer_itoa);
-				while(timing != Time_Btwn_conv && RECEIVED == FALSE);
 			}
-			while(RECEIVED == FALSE && try_conv != TRYOUT_CONV);
+			_delay_ms(1000);
+			SET_BIT(PORTB,PB0);
 			CLR_BIT(TIMSK0,TOIE0); // Arret du timer
 			if (RECEIVED == TRUE)
 			{
@@ -121,7 +118,7 @@ void state_machine(void)
 					
 					try_TV = 0;
 					state = state6;
-				} 
+				}
 				else
 				{
 					state = state2;
@@ -298,19 +295,19 @@ void my_delay_us(uint16_t us) // Fonction de delay pour entrer une variable en p
 
 void table_vibrante_ON(void)
 {
-	SET_BIT(PORTB,PB0);
-	_delay_ms(1000);
+	// 	SET_BIT(PORTB,PB0);
+	// 	_delay_ms(1000);
 	SET_BIT(PORTL,PL5);
-	PWM_MOTEUR_DC(duty_cycle_mot_dc); 
+	PWM_MOTEUR_DC(duty_cycle_mot_dc);
 }
 
 void table_vibrante_OFF(void)
 {
 	CLR_BIT(PORTL,PL5);
-	OCR2A = 0; 
-	_delay_ms(500);
-	CLR_BIT(PORTB,PB0);
-	_delay_ms(500);
+	OCR2A = 0;
+	// 	_delay_ms(500);
+	// 	CLR_BIT(PORTB,PB0);
+	// 	_delay_ms(500);
 }
 
 //////////////////////////////////////////
@@ -319,13 +316,13 @@ void table_vibrante_OFF(void)
 
 void convoyeur(void)
 {
-	for (int i = 0; i < steps; i++)
-	{
+	//for (int i = 0; i < steps; i++)
+	//{
 		SET_BIT(PORTL,PL3);
 		my_delay_us(pulseWidthMicros);
 		CLR_BIT(PORTL,PL3);
 		my_delay_us(microsBtwnSteps);
-	}
+	//}
 }
 
 ///////////////////////////////////////
@@ -352,6 +349,7 @@ ISR(TIMER0_OVF_vect)
 {
 	TCNT0 = 125;
 	timing++;
+	timing_conv++;
 }
 
 
