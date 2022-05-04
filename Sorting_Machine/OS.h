@@ -18,8 +18,8 @@
 #define TRYOUT_TV 2
 #define F_CPU 1000000UL
 #define steps 36
-#define pulseWidthMicros 2000  
-#define microsBtwnSteps 2000
+#define pulseWidthMicros 1700  
+#define microsBtwnSteps 1700
 #define duty_cycle_mot_dc 100 
 #define duty_cycle_leds 70 
 

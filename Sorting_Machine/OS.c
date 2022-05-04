@@ -299,8 +299,7 @@ void my_delay_us(uint16_t us) // Fonction de delay pour entrer une variable en p
 void table_vibrante_ON(void)
 {
 	SET_BIT(PORTB,PB0);
-	_delay_ms(200);
-	SET_BIT(PORTB,PB0);
+	_delay_ms(1000);
 	SET_BIT(PORTL,PL5);
 	PWM_MOTEUR_DC(duty_cycle_mot_dc); 
 }
@@ -309,9 +308,9 @@ void table_vibrante_OFF(void)
 {
 	CLR_BIT(PORTL,PL5);
 	OCR2A = 0; 
-	_delay_ms(200);
+	_delay_ms(500);
 	CLR_BIT(PORTB,PB0);
-	_delay_ms(200);
+	_delay_ms(500);
 }
 
 //////////////////////////////////////////
