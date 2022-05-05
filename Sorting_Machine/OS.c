@@ -57,74 +57,72 @@ void state_machine(void)
 		switch (state)
 		{
 			case state1:
-			if (FIRST == TRUE)
-			{
-				val_res_wtd =0; //valeur de résistance souhaitée
-				CHOIX_RES = FALSE; // valeur bool si le choix de la valeur est terminé ou non
-				x_tab = 0; // indice de la position dans le tableau d'entier qui recoit les chiffres, au fur et à mesure des appuis sur le bouton poussoir de l'encodeur pour les valider
-				chiffre = 0; //valeur du chiffre qui s'incrémente et décrémente quand on tourne l'encodeur rotatif
-				timing = 0; // valeur du timer en ms
-				lcd_clrscr();
-				affichage_line1("Choix resistance : ");
-				affichage_chiffre_lcd();
-				enable_btns(); // Active les interuptions des boutons de la partie interface utilisateur
-				sei();
-				timing = 0;
-				SET_BIT(TIMSK0,TOIE0); // activation du timer pour calculer le temps entre deux impulsions de l'encodeur afin d'eviter les rebonds
-				FIRST = FALSE;
-			}
-			break;
+			
+				if (FIRST == TRUE)
+				{
+					val_res_wtd =0; //valeur de résistance souhaitée
+					x_tab = 0; // indice de la position dans le tableau d'entier qui recoit les chiffres, au fur et à mesure des appuis sur le bouton poussoir de l'encodeur pour les valider
+					chiffre = 0; //valeur du chiffre qui s'incrémente et décrémente quand on tourne l'encodeur rotatif
+					timing = 0; // valeur du timer en ms
+					lcd_clrscr();
+					affichage_line1("Choix resistance : ");
+					affichage_chiffre_lcd();
+					enable_btns(); // Active les interuptions des boutons de la partie interface utilisateur
+					SET_BIT(TIMSK0,TOIE0); // activation du timer pour calculer le temps entre deux impulsions de l'encodeur afin d'eviter les rebonds
+					FIRST = FALSE;
+				}
+				break;
 			
 			case state2:
-			CLR_BIT(TIMSK0,TOIE0); // Arret du timer
-			timing = 0; // Reinitialisation  du timer
-			lcd_clrscr();
-			affichage_line1("Table vibrante...");
-			table_vibrante_ON(); // Activation de la table vibrante
-			_delay_ms(Time_TB);
-			table_vibrante_OFF(); // Desactivation table vibrante
-			try_TV++;
-			_delay_ms(1000);
-			state = state3;
-			break;
+				CLR_BIT(TIMSK0,TOIE0); // Arret du timer
+				lcd_clrscr();
+				affichage_line1("Table vibrante...");
+				table_vibrante_ON(); // Activation de la table vibrante
+				_delay_ms(Time_TB);
+				table_vibrante_OFF(); // Desactivation table vibrante
+				try_TV++;
+				state = state3;
+				break;
 			
 			case state3 :
-			timing_conv = 0;
-			reset_data();
-			lcd_clrscr();
-			affichage_line1("Attente info de");
-			affichage_line2("la Raspberry...");
-			RECEIVED = FALSE;
-			SET_BIT(TIMSK0,TOIE0); // Arret du timer
-			CLR_BIT(PORTB,PB0);
-			_delay_ms(1000);
-			while(RECEIVED == FALSE && timing_conv < TIMEOUT_CONV)
-			{
-				convoyeur(); // Activation du convoyeur
-			}
-			_delay_ms(1000);
-			SET_BIT(PORTB,PB0);
-			CLR_BIT(TIMSK0,TOIE0); // Arret du timer
-			if (RECEIVED == TRUE)
-			{
-				try_TV = 0;
+				timing_conv = 0;
+				reset_data();
+				lcd_clrscr();
+				affichage_line1("Attente info de");
+				affichage_line2("la Raspberry...");
 				RECEIVED = FALSE;
-				state = state4;
-			}
-			else
-			{
-				if (try_TV == TRYOUT_TV)
+				SET_BIT(TIMSK0,TOIE0); // Arret du timer
+				_delay_ms(500);
+				CLR_BIT(PORTB,PB0);
+				_delay_ms(500);
+				while(RECEIVED == FALSE && timing_conv < TIMEOUT_CONV)
 				{
-					
+					convoyeur(); // Activation du convoyeur
+				}
+				_delay_ms(500);
+				SET_BIT(PORTB,PB0);
+				_delay_ms(500);
+				CLR_BIT(TIMSK0,TOIE0); // Arret du timer
+				if (RECEIVED == TRUE)
+				{
 					try_TV = 0;
-					state = state6;
+					RECEIVED = FALSE;
+					state = state4;
 				}
 				else
 				{
-					state = state2;
+					if (try_TV == TRYOUT_TV)
+					{
+					
+						try_TV = 0;
+						state = state6;
+					}
+					else
+					{
+						state = state2;
+					}
 				}
-			}
-			break;
+				break;
 			
 			case state4:
 			if (FIRST2 == TRUE)
@@ -137,22 +135,20 @@ void state_machine(void)
 			if (RECEIVED == TRUE)
 			{
 				RECEIVED = FALSE;
+				FIRST2 = TRUE;
 				state = state5;
 			}
 			break;
 			
 			case state5 :
-			FIRST2 = TRUE;
-			CHOIX_RES = TRUE; // On ne doit plus refaire le choix du composant au debut
 			res_read = unmask_data(data); // fonction qui demasque les differents bytes envoyes par la raspberry et les remet dans le bon ordre
 			lcd_clrscr();
 			affichage_line1("Resistance lue : ");
 			affichage_long(res_read); // Affichage de la valeur de résistance scanée envoyée par la Raspberry, démasquée par la fonction precedente
-			_delay_ms(1500); // Temps d'affichage sur le LCD
+			_delay_ms(1000); // Temps d'affichage sur le LCD
 			servomoteur(); // Activation de servomoteur en fonction du resultat
 			_delay_ms(1000);
 			PWM_SERVO(CENTRE);
-			_delay_ms(1000);
 			reset_buf();
 			state = state3;
 			break;
@@ -295,8 +291,6 @@ void my_delay_us(uint16_t us) // Fonction de delay pour entrer une variable en p
 
 void table_vibrante_ON(void)
 {
-	// 	SET_BIT(PORTB,PB0);
-	// 	_delay_ms(1000);
 	SET_BIT(PORTL,PL5);
 	PWM_MOTEUR_DC(duty_cycle_mot_dc);
 }
@@ -305,9 +299,6 @@ void table_vibrante_OFF(void)
 {
 	CLR_BIT(PORTL,PL5);
 	OCR2A = 0;
-	// 	_delay_ms(500);
-	// 	CLR_BIT(PORTB,PB0);
-	// 	_delay_ms(500);
 }
 
 //////////////////////////////////////////
@@ -316,13 +307,10 @@ void table_vibrante_OFF(void)
 
 void convoyeur(void)
 {
-	//for (int i = 0; i < steps; i++)
-	//{
 		SET_BIT(PORTL,PL3);
 		my_delay_us(pulseWidthMicros);
 		CLR_BIT(PORTL,PL3);
 		my_delay_us(microsBtwnSteps);
-	//}
 }
 
 ///////////////////////////////////////

@@ -12,9 +12,8 @@
 // DEFINE
 #define HIGH	1 
 #define LOW		0
-#define Time_TB	3000
-#define Time_Btwn_conv 500
-#define TIMEOUT_CONV 5000
+#define Time_TB	1300
+#define TIMEOUT_CONV 8000
 #define TRYOUT_TV 2
 #define F_CPU 1000000UL
 #define steps 36
