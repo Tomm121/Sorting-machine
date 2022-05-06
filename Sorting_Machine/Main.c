@@ -35,7 +35,6 @@ int main(void)
 	TIMER2_init_FASTPWM();
 	lcd_init(LCD_DISP_ON);
 	lcd_puts("TEST");
-	//_delay_ms(20000);
 	I2C_init(0x20);
 	
 	//START BOUCLE INFINIE
