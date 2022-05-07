@@ -16,6 +16,7 @@
 #include "I2C_slave.h"
 #include "PWM.h"
 #include <util/delay.h>
+#include "I2C_slave.h"
 
 
 // FONCTION PRINCIPALE
@@ -33,11 +34,19 @@ int main(void)
 	TIMER0_Init_COUNTER_1ms();
 	TIMER1_init_FASTPW_ICRn();
 	TIMER2_init_FASTPWM();
-	lcd_init(LCD_DISP_ON);
-	lcd_puts("TEST");
 	I2C_init(0x20);
+	lcd_init(LCD_DISP_ON);
+	
+	//Avant demarrage 
+	i = -2;
+	PWM_SERVO(DROITE);
+	_delay_ms(1000);
+	PWM_SERVO(CENTRE);
 	
 	//START BOUCLE INFINIE
+	affichage_line1("Attente de la");
+	affichage_line2("raspberry ...")
+	while(RECEIVED == FALSE);
 	state_machine();
 	
 	return 0;

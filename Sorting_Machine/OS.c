@@ -29,7 +29,7 @@ int x_tab;
 int val_res_wtd_tab[10];
 char buffer_itoa[10];
 char buffer_TWI[10];
-int CHOIX_RES;
+//int CHOIX_RES;
 unsigned long res_read;
 char FIRST = TRUE;
 char FIRST2 = TRUE;
@@ -51,7 +51,6 @@ void state_machine(void)
 {
 	i = -2; // Variable externe de la classe I2C servant comme indice de la position des donnees dans le tableau de reception des donnees "data", il demarre à -2 car reception de 2 bytes non data après le SLA+R/W
 	PWM_LEDs(duty_cycle_leds); // Activation du panneau de LEDs avec une certaine luminosite pilote en PWM
-	PWM_SERVO(CENTRE);
 	while(1)
 	{
 		switch (state)
@@ -60,11 +59,10 @@ void state_machine(void)
 			
 				if (FIRST == TRUE)
 				{
-					val_res_wtd =0; //valeur de résistance souhaitée
+					val_res_wtd = 0; //valeur de résistance souhaitée
 					x_tab = 0; // indice de la position dans le tableau d'entier qui recoit les chiffres, au fur et à mesure des appuis sur le bouton poussoir de l'encodeur pour les valider
 					chiffre = 0; //valeur du chiffre qui s'incrémente et décrémente quand on tourne l'encodeur rotatif
 					timing = 0; // valeur du timer en ms
-					lcd_clrscr();
 					affichage_line1("Choix resistance : ");
 					affichage_chiffre_lcd();
 					enable_btns(); // Active les interuptions des boutons de la partie interface utilisateur
@@ -75,7 +73,6 @@ void state_machine(void)
 			
 			case state2:
 				CLR_BIT(TIMSK0,TOIE0); // Arret du timer
-				lcd_clrscr();
 				affichage_line1("Table vibrante...");
 				table_vibrante_ON(); // Activation de la table vibrante
 				_delay_ms(Time_TB);
@@ -85,23 +82,17 @@ void state_machine(void)
 				break;
 			
 			case state3 :
-				timing_conv = 0;
 				reset_data();
-				lcd_clrscr();
 				affichage_line1("Attente info de");
 				affichage_line2("la Raspberry...");
 				RECEIVED = FALSE;
 				SET_BIT(TIMSK0,TOIE0); // Arret du timer
-				_delay_ms(500);
-				CLR_BIT(PORTB,PB0);
-				_delay_ms(500);
+				timing_conv = 0;
+				activation_EN_A4988();
 				while(RECEIVED == FALSE && timing_conv < TIMEOUT_CONV)
 				{
 					convoyeur(); // Activation du convoyeur
 				}
-				_delay_ms(500);
-				SET_BIT(PORTB,PB0);
-				_delay_ms(500);
 				CLR_BIT(TIMSK0,TOIE0); // Arret du timer
 				if (RECEIVED == TRUE)
 				{
@@ -111,6 +102,7 @@ void state_machine(void)
 				}
 				else
 				{
+					desactivation_EN_A4988();
 					if (try_TV == TRYOUT_TV)
 					{
 					
@@ -127,9 +119,9 @@ void state_machine(void)
 			case state4:
 			if (FIRST2 == TRUE)
 			{
-				lcd_clrscr();
 				affichage_line1("Composant !");
 				affichage_line2("Scan en cours...");
+				desactivation_EN_A4988();
 				FIRST2 = FALSE;
 			}
 			if (RECEIVED == TRUE)
@@ -142,7 +134,6 @@ void state_machine(void)
 			
 			case state5 :
 			res_read = unmask_data(data); // fonction qui demasque les differents bytes envoyes par la raspberry et les remet dans le bon ordre
-			lcd_clrscr();
 			affichage_line1("Resistance lue : ");
 			affichage_long(res_read); // Affichage de la valeur de résistance scanée envoyée par la Raspberry, démasquée par la fonction precedente
 			_delay_ms(1000); // Temps d'affichage sur le LCD
@@ -157,7 +148,6 @@ void state_machine(void)
 			FIRST = TRUE;
 			reset_tab();
 			reset_buf();
-			lcd_clrscr();
 			affichage_line1("Tri termine");
 			_delay_ms(1500);
 			state = state1;
@@ -183,14 +173,13 @@ void affichage_chiffre_lcd(void)
 
 void affichage_line1(char *s)
 {
-	//lcd_clrscr();
+	lcd_clrscr();
 	lcd_gotoxy(0,0);
 	lcd_puts(s);
 }
 
 void affichage_line2(char *s)
 {
-	//lcd_clrscr();
 	lcd_gotoxy(0,1);
 	lcd_puts(s);
 }
@@ -282,6 +271,19 @@ void my_delay_us(uint16_t us) // Fonction de delay pour entrer une variable en p
 		_delay_us(1);
 		--us;
 	}
+}
+
+void desactivation_EN_A4988(void)
+{
+	_delay_ms(500);
+	SET_BIT(PORTB,PB0);
+	_delay_ms(500);
+}
+void activation_EN_A4988(void)
+{
+	_delay_ms(500);
+	CLR_BIT(PORTB,PB0);
+	_delay_ms(500);
 }
 
 
@@ -390,7 +392,7 @@ ISR(INT2_vect) // bouton poussoir
 	compute_value();
 	affichage_line1("Valeur souhaite : ");
 	affichage_long(val_res_wtd);
-	_delay_ms(2000);
+	_delay_ms(1500);
 	state = state2;
 }
 

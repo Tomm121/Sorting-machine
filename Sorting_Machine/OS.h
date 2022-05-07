@@ -13,12 +13,12 @@
 #define HIGH	1 
 #define LOW		0
 #define Time_TB	1300
-#define TIMEOUT_CONV 8000
+#define TIMEOUT_CONV 15000
 #define TRYOUT_TV 2
 #define F_CPU 1000000UL
 #define steps 36
-#define pulseWidthMicros 5000  
-#define microsBtwnSteps 5000
+#define pulseWidthMicros 8000  
+#define microsBtwnSteps 8000
 #define duty_cycle_mot_dc 100 
 #define duty_cycle_leds 70 
 
@@ -44,4 +44,6 @@ void reset_tab(void);
 void reset_buf(void);
 void reset_data(void);
 unsigned long unmask_data(volatile uint8_t data[]);
+void desactivation_EN_A4988(void);
+void activation_EN_A4988(void);
 #endif /* OS_H_ */
