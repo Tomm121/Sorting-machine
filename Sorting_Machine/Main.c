@@ -45,7 +45,7 @@ int main(void)
 	
 	//START BOUCLE INFINIE
 	affichage_line1("Attente de la");
-	affichage_line2("raspberry ...")
+	affichage_line2("raspberry ...");
 	while(RECEIVED == FALSE);
 	state_machine();
 	

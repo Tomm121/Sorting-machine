@@ -91,7 +91,7 @@ void state_machine(void)
 				activation_EN_A4988();
 				while(RECEIVED == FALSE && timing_conv < TIMEOUT_CONV)
 				{
-					convoyeur(); // Activation du convoyeur
+					convoyeur(); // un pas du convoyeur
 				}
 				CLR_BIT(TIMSK0,TOIE0); // Arret du timer
 				if (RECEIVED == TRUE)
